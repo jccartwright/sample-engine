@@ -12,5 +12,4 @@ class ProcessingServiceSpec extends Specification {
         processingService.processMessage("testme") == 'success'
 
     }
-
 }
