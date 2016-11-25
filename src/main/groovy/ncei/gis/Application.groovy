@@ -6,24 +6,34 @@ import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.amqp.rabbit.annotation.*
 import groovy.util.logging.Log4j
+import org.springframework.beans.factory.annotation.*
 
 
 @Log4j
 @SpringBootApplication
 class Application {
+    //can't seem to set using a property
+    //@Value('${ncei.gis.job_queue:job_queue}')
+    //private final String jobQueue
+    private final String JOB_QUEUE = 'job_queue'
+
+    @Value('${ncei.gis.job_queue:status_queue}')
+    private final String statusQueue
+
     @Autowired
     private final RabbitTemplate rabbitTemplate
 
     @Autowired
     private final ProcessingService processingService
 
+
     static void main(String[] args) {
         SpringApplication.run Application, args
     }
 
-    //TODO store queue name in application.properties?
+
     public void sendMessage(String response) {
-        rabbitTemplate.convertAndSend("status_queue", response)
+        rabbitTemplate.convertAndSend(statusQueue, response)
     }
 
 
@@ -38,11 +48,10 @@ class Application {
     }
 */
 
-    //TODO store queue name in application.properties?
     //message must have a "content_type = text/plain" if sent via RabbitMQ console
-    @RabbitListener(queues = "job_queue")
+    @RabbitListener(queues = JOB_QUEUE)
     public void receiveMessage(String content) {
-        log.debug "String received..."
+//        log.debug "String received..."
         String response = processingService.processMessage(content as String)
         sendMessage(response)
     }
