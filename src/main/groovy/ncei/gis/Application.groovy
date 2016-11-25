@@ -15,7 +15,6 @@ class Application {
     //can't seem to set using a property
     //@Value('${ncei.gis.job_queue:job_queue}')
     //private final String jobQueue
-    private final String JOB_QUEUE = 'job_queue'
 
     @Value('${ncei.gis.job_queue:status_queue}')
     private final String statusQueue
@@ -49,7 +48,7 @@ class Application {
 */
 
     //message must have a "content_type = text/plain" if sent via RabbitMQ console
-    @RabbitListener(queues = JOB_QUEUE)
+    @RabbitListener(queues = 'job_queue')
     public void receiveMessage(String content) {
 //        log.debug "String received..."
         String response = processingService.processMessage(content as String)
