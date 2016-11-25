@@ -27,9 +27,14 @@ repositories {
 	mavenCentral()
 }
 
+ext['spock.version'] = '1.1-groovy-2.4-rc-3'
 
 dependencies {
 	compile('org.springframework.boot:spring-boot-starter-amqp')
 	compile('org.codehaus.groovy:groovy')
 	testCompile('org.springframework.boot:spring-boot-starter-test')
+//	testCompile 'org.spockframework:spock-spring:1.0-groovy-2.4'
+	testCompile 'org.spockframework:spock-spring:1.1-groovy-2.4-rc-3'
+
+
 }
