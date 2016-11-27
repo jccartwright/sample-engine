@@ -12,11 +12,7 @@ import org.springframework.beans.factory.annotation.*
 @Log4j
 @SpringBootApplication
 class Application {
-    //can't seem to set using a property
-    //@Value('${ncei.gis.job_queue:job_queue}')
-    //private final String jobQueue
-
-    @Value('${ncei.gis.job_queue:status_queue}')
+    @Value('${ncei.gis.status_queue:status_queue}')
     private final String statusQueue
 
     @Autowired
@@ -48,7 +44,7 @@ class Application {
 */
 
     //message must have a "content_type = text/plain" if sent via RabbitMQ console
-    @RabbitListener(queues = 'job_queue')
+    @RabbitListener(queues = '${ncei.gis.job_queue}')
     public void receiveMessage(String content) {
 //        log.debug "String received..."
         String response = processingService.processMessage(content as String)
