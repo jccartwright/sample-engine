@@ -12,11 +12,6 @@ import org.springframework.amqp.AmqpRejectAndDontRequeueException
 import groovy.json.*
 
 
-//import org.springframework.cloud.client.ServiceInstance;
-//import org.springframework.cloud.client.discovery.DiscoveryClient;
-//import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
-
-//@EnableDiscoveryClient
 @Log4j
 @SpringBootApplication
 class Application {
@@ -44,15 +39,6 @@ class Application {
     //amqp-client libraries send a byte array while spring rabbitmqTemplate
     //sends String.  Only one RabbitListener annotated method or unpredictable
     //as to which method called
-/*
-    @RabbitListener(queues = "job_queue")
-    public void receiveMessage(byte[] content) {
-        log.debug "byte[] received..."
-        processMessage(new String(content))
-    }
-*/
-
-    //message must have a "content_type = text/plain" if sent via RabbitMQ console
     @RabbitListener(queues = '${ncei.gis.job_queue}')
     public void receiveMessage(Message message) {
         log.debug "String received: ${new String(message.body)}..."
