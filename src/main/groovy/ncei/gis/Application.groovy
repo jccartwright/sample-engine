@@ -1,14 +1,22 @@
 package ncei.gis
 
+import groovy.util.logging.Log4j
+import org.springframework.amqp.core.Message
+import org.springframework.amqp.rabbit.annotation.RabbitListener
 import org.springframework.amqp.rabbit.core.RabbitTemplate
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.SpringApplication
 import org.springframework.boot.autoconfigure.SpringBootApplication
-import org.springframework.amqp.rabbit.annotation.*
-import groovy.util.logging.Log4j
-import org.springframework.beans.factory.annotation.*
+import org.springframework.amqp.AmqpRejectAndDontRequeueException
+import groovy.json.*
 
 
+//import org.springframework.cloud.client.ServiceInstance;
+//import org.springframework.cloud.client.discovery.DiscoveryClient;
+//import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+
+//@EnableDiscoveryClient
 @Log4j
 @SpringBootApplication
 class Application {
@@ -21,6 +29,7 @@ class Application {
     @Autowired
     private final ProcessingService processingService
 
+     JsonSlurper jsonSlurper = new JsonSlurper()
 
     static void main(String[] args) {
         SpringApplication.run Application, args
@@ -45,9 +54,17 @@ class Application {
 
     //message must have a "content_type = text/plain" if sent via RabbitMQ console
     @RabbitListener(queues = '${ncei.gis.job_queue}')
-    public void receiveMessage(String content) {
-//        log.debug "String received..."
-        String response = processingService.processMessage(content as String)
-        sendMessage(response)
+    public void receiveMessage(Message message) {
+        log.debug "String received: ${new String(message.body)}..."
+        try {
+            def json = jsonSlurper.parse(message.body)
+            String response = processingService.processMessage(json)
+            log.debug("returning response: ${response}")
+            sendMessage(response)
+        } catch (Exception e) {
+            log.error(e)
+            sendMessage('failed')
+            throw new AmqpRejectAndDontRequeueException(e)
+        }
     }
 }

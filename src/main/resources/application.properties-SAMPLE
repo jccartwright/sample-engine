@@ -1,0 +1,19 @@
+spring.rabbitmq.host=myrabbitmqhostname
+spring.rabbitmq.port=5672
+spring.rabbitmq.username=myuser
+spring.rabbitmq.password=mypassword
+spring.rabbitmq.virtual-host=myvirtualhostname
+
+ncei.gis.job_queue=job_queue
+ncei.gis.status_queue=status_queue
+
+logging.pattern.console=%-5level %logger{256} - %msg%n
+logging.level.org.springframework=ERROR
+logging.level.org.springframework.test=WARN
+logging.level.org.springframework.boot=WARN
+logging.level.ncei.gis=DEBUG
+
+server.port=8081
+spring.application.name=sample-engine
+
+management.shell.auth.simple.user.password=mypassword
